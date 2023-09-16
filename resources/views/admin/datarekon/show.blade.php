@@ -92,7 +92,8 @@
                                                 @csrf
                                                 @method('delete')
                                                 <a href="{{ route('admin.datarekon.bandingkan', $item->id) }}"
-                                                    class="btn btn-info btn-sm text-white">Lihat</a>
+                                                    class="btn btn-info btn-sm text-white
+                                                    @if (!$item->rekon_admin_text or !$item->rekon_maskapai_text) disabled @endif">Lihat</a>
                                                 @if (Auth::user()->level == 'admin')
                                                     @if ($item->no_invoice)
                                                         <a href="{{ route('admin.datarekon.edit_invoice', $item->id) }}"

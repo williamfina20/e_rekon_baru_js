@@ -25,6 +25,29 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     {{-- CK Editor    --}}
     <script src="https://cdn.ckeditor.com/4.21.0/full/ckeditor.js"></script>
+    @viteReactRefresh
+    @vite('resources/js/app.js')
+
+    <style>
+        .loading_rekon {
+            position: relative;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        /*
+        .spinner_rekon {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        } */
+    </style>
 </head>
 
 <body>
@@ -222,7 +245,7 @@
     <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script type="text/javascript" language="javascript"
         src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" language="javascript" src="../resources/demo.js"></script>
+    {{-- <script type="text/javascript" language="javascript" src="../resources/demo.js"></script> --}}
     <script type="text/javascript" class="init">
         $(document).ready(function() {
             $('#example').DataTable();
@@ -267,7 +290,7 @@
 
     {{-- CK Editor --}}
     <script>
-        CKEDITOR.replace('editor1');
+        // CKEDITOR.replace('editor1');
     </script>
 </body>
 

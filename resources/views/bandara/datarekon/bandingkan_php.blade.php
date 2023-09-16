@@ -4,11 +4,11 @@
         <div class="row">
             <div class="col-8">
                 <h2 class="mb-0 fw-bold">Data Rekon</h2>
-                <h4>
+                {{-- <h4>
                     {{ $data_rekon->bandara->user ? $data_rekon->bandara->user->name : '' }} <i
                         class="mdi mdi-arrow-right"></i>
                     {{ $data_rekon->maskapai ? $data_rekon->maskapai->user->name : '' }}({{ date('F Y', strtotime($data_rekon->bulan)) }})
-                </h4>
+                </h4> --}}
             </div>
             <div class="col-4 text-end">
                 <a href="{{ route('bandara.datarekon.show', $data_rekon->maskapai_id) }}"
@@ -16,9 +16,9 @@
             </div>
         </div>
     </div>
-    @php
+    {{-- @php
         use PhpOffice\PhpSpreadsheet\Shared\Date;
-    @endphp
+    @endphp --}}
     <div class="container-fluid">
         <div class="row">
             <!-- Column -->
@@ -28,7 +28,7 @@
                         @php
                             $jumlah_error_bandara = 0;
                         @endphp
-                        <table class="table" id="example">
+                        <table id="example">
                             <thead>
                                 <tr>
                                     @foreach ($data_a[0] as $items => $item)
@@ -36,7 +36,7 @@
                                             <th>{{ $items }}</th>
                                         @endif
                                     @endforeach
-                                    <th>Keterangan</th>
+                                    {{-- <th>Keterangan</th> --}}
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -49,7 +49,7 @@
                                                     <td>{{ $b_isi }}</td>
                                                 @endif
                                             @endforeach
-                                            <td>Data AWB Maskapai yang tidak ada di Bandara</td>
+                                            {{-- <td>Data AWB Maskapai yang tidak ada di Bandara</td> --}}
                                             <td>
                                                 @php
                                                     $jumlah_error_bandara++;
@@ -76,7 +76,7 @@
                                                     <td>{{ $a_isi }}</td>
                                                 @endif
                                             @endforeach
-                                            <td>Data AWB tidak ditemukan</td>
+                                            {{-- <td>Data AWB tidak ditemukan</td> --}}
                                             <td>
                                                 @php
                                                     $jumlah_error_bandara++;
@@ -100,7 +100,7 @@
                                                         <td>{{ $a_isi }}</td>
                                                     @endif
                                                 @endforeach
-                                                <td>Terdapat Data AWB yang sama</td>
+                                                {{-- <td>Terdapat Data AWB yang sama</td> --}}
                                                 <td>
                                                     @php
                                                         $jumlah_error_bandara++;
@@ -150,7 +150,7 @@
                                                             @endif
                                                         @endforeach
                                                         @if ($jumlah_kolom_error > 0)
-                                                            <td>Data Yang berbeda</td>
+                                                            {{-- <td>Data Yang berbeda</td> --}}
                                                             <td>
                                                                 @php
                                                                     $jumlah_error_bandara++;
@@ -163,7 +163,7 @@
                                                                 </button>
                                                             </td>
                                                         @else
-                                                            <td></td>
+                                                            {{-- <td></td> --}}
                                                             <td></td>
                                                         @endif
                                                     @break
@@ -212,11 +212,11 @@
                                 <td>:</td>
                                 <td class="fw-bold">{{ $jumlah_error_bandara }}</td>
                             </tr>
-                            <tr>
+                            {{-- <tr>
                                 <td class="fw-bold">Maskapai Error</td>
                                 <td>:</td>
                                 <td class="fw-bold">{{ $jumlah_error_maskapai }}</td>
-                            </tr>
+                            </tr> --}}
                             <tr>
                                 <td class="text-info">Text Biru</td>
                                 <td>:</td>

@@ -14,7 +14,6 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Nama Maskapai Pusat</th>
-                                    <th>Jumlah Berita Acara</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -23,11 +22,6 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->name }}</td>
-                                        <td>
-                                            @if ($item->maskapai_pusat_to_maskapai)
-                                                {{ $item->maskapai_pusat_to_maskapai->rekon->count() }}
-                                            @endif
-                                        </td>
                                         <td>
                                             @if ($item->maskapai_pusat_to_maskapai)
                                                 <a href="{{ route('bisnis.datarekon.maskapai', $item->id) }}"

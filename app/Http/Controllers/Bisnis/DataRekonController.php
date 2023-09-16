@@ -27,7 +27,7 @@ class DataRekonController extends Controller
     {
         $maskapai_pusat = User::find($id);
         $maskapai = Maskapai::where('maskapai_pusat_id', $id)->get();
-        $rekon = Rekon::orderBy('bulan', 'ASC')->get();
+        $rekon = Rekon::orderBy('bulan', 'ASC')->whereNotNull('admin_acc')->whereNotNull('maskapai_acc')->get();
         $rekon_baru = [];
         foreach ($maskapai as $item) {
             foreach ($rekon as $r) {
@@ -57,10 +57,10 @@ class DataRekonController extends Controller
         $maskapai = Maskapai::where('maskapai_pusat_id', $id)->get();
         if (Session::get('bulan')) {
             $bulan = Session::get('bulan');
-            $rekon = Rekon::where('bulan', $bulan)->get();
+            $rekon = Rekon::where('bulan', $bulan)->whereNotNull('admin_acc')->whereNotNull('maskapai_acc')->get();
         } else {
             $bulan = $request->bulan;
-            $rekon = Rekon::where('bulan', $bulan)->get();
+            $rekon = Rekon::where('bulan', $bulan)->whereNotNull('admin_acc')->whereNotNull('maskapai_acc')->get();
         }
 
         $rekon_baru = [];
@@ -149,14 +149,16 @@ class DataRekonController extends Controller
         $maskapai = Maskapai::where('maskapai_pusat_id', $maskapai_pusat_id)->get();
 
         foreach ($maskapai as $m) {
-            $rekon = Rekon::where('maskapai_id', $m->id)->where('bulan', $data_rekon->bulan)->first();
-            if (!$rekon->no_invoice) {
-                $rekon->update([
-                    'no_invoice' => $request->no_invoice,
-                    'no_faktur_pajak' => $request->no_faktur_pajak,
-                    'tanggal_invoice' => now(),
-                    'user_invoice' => Auth::user()->id,
-                ]);
+            $rekon = Rekon::where('maskapai_id', $m->id)->where('bulan', $data_rekon->bulan)->whereNotNull('admin_acc')->whereNotNull('maskapai_acc')->first();
+            if ($rekon) {
+                if (!$rekon->no_invoice) {
+                    $rekon->update([
+                        'no_invoice' => $request->no_invoice,
+                        'no_faktur_pajak' => $request->no_faktur_pajak,
+                        'tanggal_invoice' => now(),
+                        'user_invoice' => Auth::user()->id,
+                    ]);
+                }
             }
         }
 
@@ -174,7 +176,7 @@ class DataRekonController extends Controller
         $maskapai = Maskapai::where('maskapai_pusat_id', $maskapai_pusat->id)->get();
 
         $bulan = $request->bulan;
-        $rekon = Rekon::where('bulan', $bulan)->get();
+        $rekon = Rekon::where('bulan', $bulan)->whereNotNull('admin_acc')->whereNotNull('maskapai_acc')->get();
 
         $rekon_baru = [];
 
@@ -235,7 +237,7 @@ class DataRekonController extends Controller
             $data_rekon = Rekon::find($id);
 
             $berita_acara = BeritaAcara::where('rekons_id', $data_rekon->id)->first();
-            $semua_rekon_pada_bandara_yang_disetujui = Rekon::where('bandara_id', $data_rekon->bandara_id)->where('admin_status', '>=', 2)->get();
+            $semua_rekon_pada_bandara_yang_disetujui = Rekon::where('bandara_id', $data_rekon->bandara_id)->where('admin_status', '>=', 2)->whereNotNull('admin_acc')->whereNotNull('maskapai_acc')->get();
             $no_berita_acara = 0;
             foreach ($semua_rekon_pada_bandara_yang_disetujui as $items => $item) {
                 if ($item->id == $data_rekon->id) {

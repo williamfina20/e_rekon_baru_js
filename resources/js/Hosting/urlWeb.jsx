@@ -1,1 +1,1 @@
-export default 'http://27.112.79.39';
+export default 'https://sitamu.webinformasi.com';

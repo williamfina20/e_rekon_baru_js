@@ -68,12 +68,9 @@
                                         </td>
                                         <td>
                                             <a href="{{ route('maskapai_pusat.datarekon.bandingkan', $item->id) }}"
-                                                class="btn btn-info btn-sm text-white @if (!$item->rekon_admin_text or !$item->rekon_maskapai_text) disabled @endif">
-                                                @if (!$item->admin_status or !$item->maskapai_status)
-                                                    Bandingkan
-                                                @else
-                                                    Lihat
-                                                @endif
+                                                class="btn btn-info btn-sm text-white
+                                                @if (!$item->rekon_admin_text or !$item->rekon_maskapai_text) disabled @endif">
+                                                Lihat
                                             </a>
                                             @if ($item->admin_status == 2 and $item->maskapai_status == 2)
                                                 @if ($item->admin_acc and $item->maskapai_acc)

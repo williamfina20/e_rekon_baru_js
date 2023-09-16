@@ -240,140 +240,147 @@ class DataRekonController extends Controller
         return redirect()->back()->with('message', 'Data berhasil dihapus');
     }
 
+    // public function bandingkan($id)
+    // {
+    //     $data_rekon = Rekon::find($id);
+    //     $data_maskapai = Maskapai::find($data_rekon->maskapai_id);
+
+    //     $data_rekon_admin = json_decode($data_rekon->rekon_admin_text, true);
+    //     $data_rekon_maskapai = json_decode($data_rekon->rekon_maskapai_text, true);
+
+    //     $data_a = $data_rekon_admin;
+    //     $data_b = $data_rekon_maskapai;
+
+    //     $tampung_kunci = [];
+    //     $a_validasi_awb_sama = [];
+    //     $a_validasi_awb_tidak_ada = [];
+
+    //     // ====cek data awb yang tidak ada
+    //     foreach ($data_a as $a_items => $a_item) {
+    //         foreach ($data_b as $b_items => $b_item) {
+    //             if ($a_item['AWB'] == $b_item['AWB']) {
+    //                 array_push($tampung_kunci, $a_item['AWB']);
+    //             }
+    //         }
+    //     }
+    //     foreach ($data_a as $a_items => $a_item) {
+    //         if (in_array($a_item['AWB'], $tampung_kunci)) {
+    //             $a_validasi_awb_tidak_ada[$a_items] = 'ada';
+    //         } else {
+    //             $a_validasi_awb_tidak_ada[$a_items] = 'tidak';
+    //         }
+    //     }
+
+    //     // ====cek data awb yang sama
+    //     foreach ($data_a as $a_items => $a_item) {
+    //         $i = 0;
+    //         foreach ($data_a as $a2_items => $a2_item) {
+    //             if ($a_item['AWB'] == $a2_item['AWB']) {
+    //                 $i++;
+    //             }
+    //         }
+    //         $a_validasi_awb_sama[$a_items] = $i;
+    //     }
+
+    //     // ===============================================================
+    //     // Untuk Maskapai
+
+    //     $data_a = $data_rekon_maskapai;
+    //     $data_b = $data_rekon_admin;
+
+    //     $tampung_kunci_2 = [];
+    //     $b_validasi_awb_sama = [];
+    //     $b_validasi_awb_tidak_ada = [];
+
+    //     // ====cek data awb yang tidak ada
+    //     foreach ($data_a as $a_items => $a_item) {
+    //         foreach ($data_b as $b_items => $b_item) {
+    //             if ($a_item['AWB'] == $b_item['AWB']) {
+    //                 array_push($tampung_kunci_2, $a_item['AWB']);
+    //             }
+    //         }
+    //     }
+    //     foreach ($data_a as $a_items => $a_item) {
+    //         if (in_array($a_item['AWB'], $tampung_kunci_2)) {
+    //             $b_validasi_awb_tidak_ada[$a_items] = 'ada';
+    //         } else {
+    //             $b_validasi_awb_tidak_ada[$a_items] = 'tidak';
+    //         }
+    //     }
+
+    //     // ====cek data awb yang sama
+    //     foreach ($data_a as $a_items => $a_item) {
+    //         $i = 0;
+    //         foreach ($data_a as $a2_items => $a2_item) {
+    //             if ($a_item['AWB'] == $a2_item['AWB']) {
+    //                 $i++;
+    //             }
+    //         }
+    //         $b_validasi_awb_sama[$a_items] = $i;
+    //     }
+
+
+    //     $jumlah_error_maskapai = 0;
+    //     foreach ($data_b as $b_items => $b_item) {
+    //         if (!in_array($b_item['AWB'], $tampung_kunci_2)) {
+    //             $jumlah_error_maskapai++;
+    //         }
+    //     }
+    //     foreach ($data_a as $a_items => $a_item) {
+    //         if ($b_validasi_awb_tidak_ada[$a_items] == 'tidak') {
+    //             $jumlah_error_maskapai++;
+    //         } else {
+    //             if ($b_validasi_awb_sama[$a_items] > 1) {
+    //                 $jumlah_error_maskapai++;
+    //             } else {
+    //                 foreach ($data_b as $b_items => $b_item) {
+    //                     if (in_array($a_item['AWB'], $b_item)) {
+    //                         $jumlah_kolom_error = 0;
+    //                         foreach ($a_item as $a_kunci => $a_isi) {
+    //                             if ($a_isi == $b_item[$a_kunci]) {
+    //                             } else {
+    //                                 if ($a_kunci != 'NO') {
+    //                                     $jumlah_kolom_error++;
+    //                                 }
+    //                             }
+    //                         }
+    //                         if ($jumlah_kolom_error > 0) {
+    //                             $jumlah_error_maskapai++;
+    //                         }
+    //                         break;
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     // ===============================================================
+
+    //     $data_a = $data_rekon_admin;
+    //     $data_b = $data_rekon_maskapai;
+
+    //     $riwayat_rekon = RiwayatRekon::where('rekons_id', $id)->latest()->get();
+
+
+    //     return view('admin.datarekon.bandingkan', [
+    //         'data_rekon' => $data_rekon,
+    //         'data_a' => $data_a,
+    //         'data_b' => $data_b,
+    //         'data_maskapai' => $data_maskapai,
+    //         'a_validasi_awb_sama' =>  $a_validasi_awb_sama,
+    //         'a_validasi_awb_tidak_ada' =>  $a_validasi_awb_tidak_ada,
+    //         'tampung_kunci' => $tampung_kunci,
+    //         'riwayat_rekon' => $riwayat_rekon,
+    //         'jumlah_error_maskapai' => $jumlah_error_maskapai
+    //     ]);
+    // }
     public function bandingkan($id)
     {
-        $data_rekon = Rekon::find($id);
-        $data_maskapai = Maskapai::find($data_rekon->maskapai_id);
-
-        $data_rekon_admin = json_decode($data_rekon->rekon_admin_text, true);
-        $data_rekon_maskapai = json_decode($data_rekon->rekon_maskapai_text, true);
-
-        $data_a = $data_rekon_admin;
-        $data_b = $data_rekon_maskapai;
-
-        $tampung_kunci = [];
-        $a_validasi_awb_sama = [];
-        $a_validasi_awb_tidak_ada = [];
-
-        // ====cek data awb yang tidak ada
-        foreach ($data_a as $a_items => $a_item) {
-            foreach ($data_b as $b_items => $b_item) {
-                if ($a_item['AWB'] == $b_item['AWB']) {
-                    array_push($tampung_kunci, $a_item['AWB']);
-                }
-            }
-        }
-        foreach ($data_a as $a_items => $a_item) {
-            if (in_array($a_item['AWB'], $tampung_kunci)) {
-                $a_validasi_awb_tidak_ada[$a_items] = 'ada';
-            } else {
-                $a_validasi_awb_tidak_ada[$a_items] = 'tidak';
-            }
-        }
-
-        // ====cek data awb yang sama
-        foreach ($data_a as $a_items => $a_item) {
-            $i = 0;
-            foreach ($data_a as $a2_items => $a2_item) {
-                if ($a_item['AWB'] == $a2_item['AWB']) {
-                    $i++;
-                }
-            }
-            $a_validasi_awb_sama[$a_items] = $i;
-        }
-
-        // ===============================================================
-        // Untuk Maskapai
-
-        $data_a = $data_rekon_maskapai;
-        $data_b = $data_rekon_admin;
-
-        $tampung_kunci_2 = [];
-        $b_validasi_awb_sama = [];
-        $b_validasi_awb_tidak_ada = [];
-
-        // ====cek data awb yang tidak ada
-        foreach ($data_a as $a_items => $a_item) {
-            foreach ($data_b as $b_items => $b_item) {
-                if ($a_item['AWB'] == $b_item['AWB']) {
-                    array_push($tampung_kunci_2, $a_item['AWB']);
-                }
-            }
-        }
-        foreach ($data_a as $a_items => $a_item) {
-            if (in_array($a_item['AWB'], $tampung_kunci_2)) {
-                $b_validasi_awb_tidak_ada[$a_items] = 'ada';
-            } else {
-                $b_validasi_awb_tidak_ada[$a_items] = 'tidak';
-            }
-        }
-
-        // ====cek data awb yang sama
-        foreach ($data_a as $a_items => $a_item) {
-            $i = 0;
-            foreach ($data_a as $a2_items => $a2_item) {
-                if ($a_item['AWB'] == $a2_item['AWB']) {
-                    $i++;
-                }
-            }
-            $b_validasi_awb_sama[$a_items] = $i;
-        }
-
-
-        $jumlah_error_maskapai = 0;
-        foreach ($data_b as $b_items => $b_item) {
-            if (!in_array($b_item['AWB'], $tampung_kunci_2)) {
-                $jumlah_error_maskapai++;
-            }
-        }
-        foreach ($data_a as $a_items => $a_item) {
-            if ($b_validasi_awb_tidak_ada[$a_items] == 'tidak') {
-                $jumlah_error_maskapai++;
-            } else {
-                if ($b_validasi_awb_sama[$a_items] > 1) {
-                    $jumlah_error_maskapai++;
-                } else {
-                    foreach ($data_b as $b_items => $b_item) {
-                        if (in_array($a_item['AWB'], $b_item)) {
-                            $jumlah_kolom_error = 0;
-                            foreach ($a_item as $a_kunci => $a_isi) {
-                                if ($a_isi == $b_item[$a_kunci]) {
-                                } else {
-                                    if ($a_kunci != 'NO') {
-                                        $jumlah_kolom_error++;
-                                    }
-                                }
-                            }
-                            if ($jumlah_kolom_error > 0) {
-                                $jumlah_error_maskapai++;
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        // ===============================================================
-
-        $data_a = $data_rekon_admin;
-        $data_b = $data_rekon_maskapai;
-
-        $riwayat_rekon = RiwayatRekon::where('rekons_id', $id)->latest()->get();
-
+        $data_rekon = Rekon::where('id', $id)->first();
 
         return view('admin.datarekon.bandingkan', [
             'data_rekon' => $data_rekon,
-            'data_a' => $data_a,
-            'data_b' => $data_b,
-            'data_maskapai' => $data_maskapai,
-            'a_validasi_awb_sama' =>  $a_validasi_awb_sama,
-            'a_validasi_awb_tidak_ada' =>  $a_validasi_awb_tidak_ada,
-            'tampung_kunci' => $tampung_kunci,
-            'riwayat_rekon' => $riwayat_rekon,
-            'jumlah_error_maskapai' => $jumlah_error_maskapai
         ]);
     }
-
     public function persetujuan(Request $request, $id)
     {
 

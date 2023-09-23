@@ -24,8 +24,8 @@ const BandaraRekonTambah = () => {
                     }
                 })
                 setAdmin_kolom(nilai_kolom_admin);
-                if (nilai_kolom_admin !== 12) {
-                    toast.error(`Jumlah Kolom data harus 12 sesuai format`);
+                if (nilai_kolom_admin !== 10) {
+                    toast.error(`Jumlah Kolom data harus 10 sesuai format`);
                 }
             }, 50);
         }
@@ -113,7 +113,7 @@ const BandaraRekonTambah = () => {
                 <div className="mb-3">
                     <a href={`/bandara/datarekon/${data_maskapai.id}/show`}
                         className="btn btn-secondary btn-sm">Kembali</a>
-                    {admin_kolom === 12 &&
+                    {admin_kolom === 10 &&
                         (
                             <button type="submit" className="btn btn-primary btn-sm">Simpan</button>
                         )}
@@ -127,7 +127,7 @@ const BandaraRekonTambah = () => {
             {data.length > 0 && (
                 <div className="table-responsive">
                     Kolom Data : {admin_kolom}
-                    {admin_kolom !== 12 ?
+                    {admin_kolom !== 10 ?
                         <i className="mdi mdi-close-circle text-danger"></i>
                         :
                         <i className="mdi mdi-check-circle text-success"></i>

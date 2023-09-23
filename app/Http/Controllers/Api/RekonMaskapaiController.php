@@ -83,9 +83,11 @@ class RekonMaskapaiController extends Controller
                                 }
                             }
                             if ($jumlah_kolom_error > 0) {
+                                if (array_key_exists('status_rekon', $data_a[$a_items])  and $data_a[$a_items]['status_rekon'] == 'sama') {
+                                    $jumlah_error_maskapai++;
+                                }
                                 $data_a[$a_items]['status_rekon'] = 'edit';
                                 $data_a[$a_items]['baris_id'] = $a_items;
-                                $jumlah_error_maskapai++;
                             } else {
                                 $data_a[$a_items]['status_rekon'] = '';
                                 $data_a[$a_items]['baris_id'] = $a_items;

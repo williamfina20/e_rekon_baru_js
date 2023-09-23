@@ -22,89 +22,109 @@ class RekonBandaraController extends Controller
         $data_rekon = DB::table('rekons')->where('id', $id)->first();
         $data_maskapai = DB::table('maskapai')->where('id', $data_rekon->maskapai_id)->first();
 
-        $data_rekon_admin = json_decode($data_rekon->rekon_admin_text, true);
-        $data_rekon_maskapai = json_decode($data_rekon->rekon_maskapai_text, true);
+        // $data_rekon_admin = json_decode($data_rekon->rekon_admin_text, true);
+        // $data_rekon_maskapai = json_decode($data_rekon->rekon_maskapai_text, true);
 
-        $data_a = $data_rekon_admin;
-        $data_b = $data_rekon_maskapai;
+        // $data_rekon_baru = DB::table('rekons')->where('id', $id)->select(
+        //     'id',
+        //     'bulan',
+        //     'admin_acc',
+        //     'maskapai_acc',
+        //     'bandara_id',
+        //     'bandara_id',
+        //     'maskapai_id',
+        //     'no_invoice',
+        //     'tanggal_invoice',
+        //     'user_invoice',
+        //     'user_invoice',
+        //     'admin_pusat_acc',
+        //     'maskapai_pusat_acc',
+        //     'admin_status',
+        //     'maskapai_status',
+        //     'no_faktur_pajak',
+        // )->first();
+        // $data_a = $data_rekon_admin;
+        // $data_b = $data_rekon_maskapai;
 
-        $tampung_kunci = [];
-        $a_validasi_awb_sama = [];
-        $a_validasi_awb_tidak_ada = [];
+        // $tampung_kunci = [];
+        // $a_validasi_awb_sama = [];
+        // $a_validasi_awb_tidak_ada = [];
 
-        foreach ($data_a as $a_items => $a_item) {
-            // ====cek data awb yang tidak ada
-            foreach ($data_b as $b_items => $b_item) {
-                if ($a_item['AWB'] == $b_item['AWB']) {
-                    array_push($tampung_kunci, $a_item['AWB']);
-                    break;
-                }
-            }
-            if (in_array($a_item['AWB'], $tampung_kunci)) {
-                $a_validasi_awb_tidak_ada[$a_items] = 'ada';
-            } else {
-                $a_validasi_awb_tidak_ada[$a_items] = 'tidak';
-            }
+        // foreach ($data_a as $a_items => $a_item) {
+        //     // ====cek data awb yang tidak ada
+        //     foreach ($data_b as $b_items => $b_item) {
+        //         if ($a_item['AWB'] == $b_item['AWB']) {
+        //             array_push($tampung_kunci, $a_item['AWB']);
+        //             break;
+        //         }
+        //     } 
+        //     if (in_array($a_item['AWB'], $tampung_kunci)) {
+        //         $a_validasi_awb_tidak_ada[$a_items] = 'ada';
+        //     } else {
+        //         $a_validasi_awb_tidak_ada[$a_items] = 'tidak';
+        //     }
 
-            // ====cek data awb yang sama
-            $i = 0;
-            foreach ($data_a as $a2_items => $a2_item) {
-                if ($a_item['AWB'] == $a2_item['AWB']) {
-                    $i++;
-                }
-            }
-            $a_validasi_awb_sama[$a_items] = $i;
-        }
+        //     // ====cek data awb yang sama
+        //     $i = 0;
+        //     foreach ($data_a as $a2_items => $a2_item) {
+        //         if ($a_item['AWB'] == $a2_item['AWB']) {
+        //             $i++;
+        //         }
+        //     }
+        //     $a_validasi_awb_sama[$a_items] = $i;
+        // }
 
         // ******************************************************************
         // Kode dari view bandingkan
 
-        $jumlah_error_bandara = 0;
+        // $jumlah_error_bandara = 0;
 
-        foreach ($data_a as $a_items => $a_item) {
-            if ($a_validasi_awb_tidak_ada[$a_items] == 'tidak') {
-                $data_a[$a_items]['status_rekon'] = 'hapus';
-                $data_a[$a_items]['baris_id'] = $a_items;
-                $jumlah_error_bandara++;
-            } else {
-                if ($a_validasi_awb_sama[$a_items] > 1) {
-                    $data_a[$a_items]['status_rekon'] = 'sama';
-                    $data_a[$a_items]['baris_id'] = $a_items;
-                    $jumlah_error_bandara++;
-                } else {
-                    foreach ($data_b as $b_items => $b_item) {
-                        if (in_array($a_item['AWB'], $b_item)) {
-                            $jumlah_kolom_error = 0;
-                            foreach ($a_item as $a_kunci => $a_isi) {
-                                if ($a_isi != $b_item[$a_kunci]) {
-                                    if ($a_kunci != 'NO') {
-                                        $data_a[$a_items][$a_kunci] = $a_isi . ' => ' . $b_item[$a_kunci];
-                                        $jumlah_kolom_error++;
-                                    }
-                                }
-                            }
-                            if ($jumlah_kolom_error > 0) {
-                                $data_a[$a_items]['status_rekon'] = 'edit';
-                                $data_a[$a_items]['baris_id'] = $a_items;
-                                $jumlah_error_bandara++;
-                            } else {
-                                $data_a[$a_items]['status_rekon'] = '';
-                                $data_a[$a_items]['baris_id'] = $a_items;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        // foreach ($data_a as $a_items => $a_item) {
+        //     if ($a_validasi_awb_tidak_ada[$a_items] == 'tidak') {
+        //         $data_a[$a_items]['status_rekon'] = 'hapus';
+        //         $data_a[$a_items]['baris_id'] = $a_items;
+        //         $jumlah_error_bandara++;
+        //     } else {
+        //         if ($a_validasi_awb_sama[$a_items] > 1) {
+        //             $data_a[$a_items]['status_rekon'] = 'sama';
+        //             $data_a[$a_items]['baris_id'] = $a_items;
+        //             $jumlah_error_bandara++;
+        //         } else {
+        //             foreach ($data_b as $b_items => $b_item) {
+        //                 if (in_array($a_item['AWB'], $b_item)) {
+        //                     $jumlah_kolom_error = 0;
+        //                     foreach ($a_item as $a_kunci => $a_isi) {
+        //                         if ($a_isi != $b_item[$a_kunci]) {
+        //                             if ($a_kunci != 'NO') {
+        //                                 $data_a[$a_items][$a_kunci] = $a_isi . ' => ' . $b_item[$a_kunci];
+        //                                 $jumlah_kolom_error++;
+        //                             }
+        //                         }
+        //                     }
+        //                     if ($jumlah_kolom_error > 0) {
+        //                         if (array_key_exists('status_rekon', $data_a[$a_items])  and $data_a[$a_items]['status_rekon'] == 'sama') {
+        //                             $jumlah_error_bandara++;
+        //                         }
+        //                         $data_a[$a_items]['status_rekon'] = 'edit';
+        //                         $data_a[$a_items]['baris_id'] = $a_items;
+        //                     } else {
+        //                         $data_a[$a_items]['status_rekon'] = '';
+        //                         $data_a[$a_items]['baris_id'] = $a_items;
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
-        foreach ($data_b as $b_items => $b_item) {
-            if (!in_array($b_item['AWB'], $tampung_kunci)) {
-                $data_b[$b_items]['status_rekon'] = 'tambah';
-                $data_b[$b_items]['baris_id'] = $b_items;
-                array_push($data_a, $data_b[$b_items]);
-                $jumlah_error_bandara++;
-            }
-        }
+        // foreach ($data_b as $b_items => $b_item) {
+        //     if (!in_array($b_item['AWB'], $tampung_kunci)) {
+        //         $data_b[$b_items]['status_rekon'] = 'tambah';
+        //         $data_b[$b_items]['baris_id'] = $b_items;
+        //         array_push($data_a, $data_b[$b_items]);
+        //         $jumlah_error_bandara++;
+        //     }
+        // }
 
         // dd($data_a);
 
@@ -113,8 +133,12 @@ class RekonBandaraController extends Controller
         return response()->json([
             'pesan' => 'berhasil',
             'data_rekon' => $data_rekon,
-            'data_rekon_text' => $data_a,
-            'jumlah_error_bandara' => $jumlah_error_bandara,
+            // 'data_rekon_admin' => $data_rekon_admin,
+            // 'data_rekon_maskapai' => $data_rekon_maskapai,
+            // 'data_rekon_text' => $data_a,
+            // 'jumlah_error_bandara' => $jumlah_error_bandara,
+            // 'a_validasi_awb_sama' => $a_validasi_awb_sama,
+            // 'a_validasi_awb_tidak_ada' => $a_validasi_awb_tidak_ada
         ]);
     }
 
@@ -172,24 +196,20 @@ class RekonBandaraController extends Controller
         $b_validasi_awb_sama = [];
         $b_validasi_awb_tidak_ada = [];
 
-        // ====cek data awb yang tidak ada
         foreach ($data_a2 as $a_items => $a_item) {
+            // ====cek data awb yang tidak ada
             foreach ($data_b2 as $b_items => $b_item) {
                 if ($a_item['AWB'] == $b_item['AWB']) {
                     array_push($tampung_kunci_2, $a_item['AWB']);
                 }
             }
-        }
-        foreach ($data_a2 as $a_items => $a_item) {
             if (in_array($a_item['AWB'], $tampung_kunci_2)) {
                 $b_validasi_awb_tidak_ada[$a_items] = 'ada';
             } else {
                 $b_validasi_awb_tidak_ada[$a_items] = 'tidak';
             }
-        }
 
-        // ====cek data awb yang sama
-        foreach ($data_a2 as $a_items => $a_item) {
+            // ====cek data awb yang sama
             $i = 0;
             foreach ($data_a2 as $a2_items => $a2_item) {
                 if ($a_item['AWB'] == $a2_item['AWB']) {
@@ -199,7 +219,6 @@ class RekonBandaraController extends Controller
             $b_validasi_awb_sama[$a_items] = $i;
         }
 
-
         $jumlah_error_maskapai = 0;
         foreach ($data_b2 as $b_items => $b_item) {
             if (!in_array($b_item['AWB'], $tampung_kunci_2)) {
@@ -207,32 +226,34 @@ class RekonBandaraController extends Controller
                 break;
             }
         }
-        foreach ($data_a2 as $a_items => $a_item) {
-            if ($b_validasi_awb_tidak_ada[$a_items] == 'tidak') {
-                $jumlah_error_maskapai++;
-                break;
-            } else {
-                if ($b_validasi_awb_sama[$a_items] > 1) {
+        if ($jumlah_error_maskapai == 0) {
+            foreach ($data_a2 as $a_items => $a_item) {
+                if ($b_validasi_awb_tidak_ada[$a_items] == 'tidak') {
                     $jumlah_error_maskapai++;
                     break;
                 } else {
-                    foreach ($data_b2 as $b_items => $b_item) {
-                        if (in_array($a_item['AWB'], $b_item)) {
-                            $jumlah_kolom_error = 0;
-                            foreach ($a_item as $a_kunci => $a_isi) {
-                                if ($a_isi == $b_item[$a_kunci]) {
-                                } else {
-                                    if ($a_kunci != 'NO') {
-                                        $jumlah_kolom_error++;
-                                        break;
+                    if ($b_validasi_awb_sama[$a_items] > 1) {
+                        $jumlah_error_maskapai++;
+                        break;
+                    } else {
+                        foreach ($data_b2 as $b_items => $b_item) {
+                            if (in_array($a_item['AWB'], $b_item)) {
+                                $jumlah_kolom_error = 0;
+                                foreach ($a_item as $a_kunci => $a_isi) {
+                                    if ($a_isi == $b_item[$a_kunci]) {
+                                    } else {
+                                        if ($a_kunci != 'NO') {
+                                            $jumlah_kolom_error++;
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                            if ($jumlah_kolom_error > 0) {
-                                $jumlah_error_maskapai++;
+                                if ($jumlah_kolom_error > 0) {
+                                    $jumlah_error_maskapai++;
+                                    break 2;
+                                }
                                 break;
                             }
-                            break;
                         }
                     }
                 }

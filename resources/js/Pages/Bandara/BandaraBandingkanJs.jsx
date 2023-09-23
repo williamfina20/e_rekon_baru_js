@@ -29,44 +29,128 @@ const BandaraBandingkanJs = () => {
 
   useEffect(() => {
     PanggilBandingkanBandara();
-    PanggilErrorMaskapai();
-    PanggilRiwayatRekon();
   }, []);
 
   const PanggilBandingkanBandara = async () => {
     setLoading(true);
     $('#table_rekon').DataTable().clear().destroy();
-    await axios.get(`${urlWeb}/api/bandara/datarekon/${rekon_id}/api_bandingkan_bandara`)
-      .then((res) => {
-        console.log(res);
-        setTimeout(() => {
-          setData_rekon(res.data.data_rekon);
-          setRecords(res.data.data_rekon_text);
-          setColumn(Object.keys(res.data.data_rekon_text[0]));
-          setError_bandara(res.data.jumlah_error_bandara);
-          TableData();
-          setLoading(false);
-        }, 1000);
-      })
-      .catch((err) => {
-        console.log(err);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
-      });
+    try {
+      let res = await axios.get(`${urlWeb}/api/bandara/datarekon/${rekon_id}/api_bandingkan_bandara`);
+      console.log(res.data);
+      HitungDataRekon(await res.data);
+      setTimeout(() => {
+        TableData();
+        setLoading(false);
+      }, 1000);
+
+    } catch (err) {
+      console.log(err);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
   }
 
-  const PanggilRiwayatRekon = () => {
-    axios.get(`${urlWeb}/api/bandara/datarekon/${rekon_id}/api_riwayat_rekon`)
+  async function HitungDataRekon(data) {
+    let data_a = await JSON.parse(data.data_rekon.rekon_admin_text);
+    let data_b = await JSON.parse(data.data_rekon.rekon_maskapai_text);
+    // let data_a = await data.data_rekon_admin;
+    // let data_b = await data.data_rekon_maskapai;
+
+    let tampung_kunci = [];
+    let a_validasi_awb_tidak_ada = [];
+    let a_validasi_awb_sama = [];
+
+    let jumlah_error_bandara = 0;
+
+    data_a.map((a_item, a_items) => {
+      // cek data awb yang tidak ada
+      data_b.map((b_item, b_items) => {
+        if (a_item.AWB === b_item.AWB) {
+          tampung_kunci.push(a_item.AWB)
+          return
+        }
+      })
+      if (tampung_kunci.includes(a_item.AWB)) {
+        a_validasi_awb_tidak_ada[a_items] = 'ada';
+      } else {
+        a_validasi_awb_tidak_ada[a_items] = 'tidak';
+      }
+
+      // cek data awb yang sama
+      let i = 0;
+      data_a.map((a2_item, a2_items) => {
+        if (a_item.AWB === a2_item.AWB) {
+          i++;
+        }
+      })
+      a_validasi_awb_sama[a_items] = i;
+
+      // ====================================================
+
+      if (a_validasi_awb_tidak_ada[a_items] === 'tidak') {
+        data_a[a_items]['status_rekon'] = 'hapus';
+        data_a[a_items]['baris_id'] = a_items;
+        jumlah_error_bandara++;
+      } else {
+        if (a_validasi_awb_sama[a_items] > 1) {
+          data_a[a_items]['status_rekon'] = 'sama';
+          data_a[a_items]['baris_id'] = a_items;
+          jumlah_error_bandara++;
+        } else {
+          data_b.map((b_item, b_items) => {
+            if ((Object.values(b_item)).includes(a_item.AWB)) {
+              let jumlah_kolom_error = 0;
+              (Object.values(a_item)).map((a_isi, x) => {
+                if (String(a_isi) !== String(b_item[Object.keys(a_item)[x]])) {
+                  data_a[a_items][Object.keys(a_item)[x]] = `${a_isi} => ${b_item[Object.keys(a_item)[x]]}`;
+                  jumlah_kolom_error++;
+                }
+              })
+              if (jumlah_kolom_error > 0) {
+                // if (data_a[a_items].hasOwnProperty('status_rekon') && data_a[a_items]['status_rekon'] === 'sama') {
+                // }
+                jumlah_error_bandara++;
+                data_a[a_items]['status_rekon'] = 'edit';
+                data_a[a_items]['baris_id'] = a_items;
+              } else {
+                data_a[a_items]['status_rekon'] = '';
+                data_a[a_items]['baris_id'] = a_items;
+              }
+            }
+          })
+        }
+      }
+    })
+    data_b.map((b_item, b_items) => {
+      if (tampung_kunci.includes(String(b_item.AWB))) {
+      } else {
+        data_b[b_items]['status_rekon'] = 'tambah';
+        data_b[b_items]['baris_id'] = b_items;
+        jumlah_error_bandara++
+        data_a.push(data_b[b_items]);
+      }
+    });
+
+    setRecords(data_a);
+    setColumn(Object.keys(data_a[0]));
+    setError_bandara(jumlah_error_bandara);
+    PanggilErrorMaskapai();
+    PanggilRiwayatRekon();
+  }
+
+  const PanggilRiwayatRekon = async () => {
+    await axios.get(`${urlWeb}/api/bandara/datarekon/${rekon_id}/api_riwayat_rekon`)
       .then((res) => {
         setRiwayat(res.data.riwayat_rekon);
       })
       .catch((err) => { console.log(err) });
   }
 
-  const PanggilErrorMaskapai = () => {
-    axios.get(`${urlWeb}/api/bandara/datarekon/${rekon_id}/api_error_maskapai`)
+  const PanggilErrorMaskapai = async () => {
+    await axios.get(`${urlWeb}/api/bandara/datarekon/${rekon_id}/api_error_maskapai`)
       .then((res) => {
+        console.log(res.data.jumlah_error_maskapai);
         setError_maskapai(res.data.jumlah_error_maskapai);
       })
       .catch((err) => { console.log(err) });
@@ -80,15 +164,15 @@ const BandaraBandingkanJs = () => {
     })
       .then((res) => {
         PanggilBandingkanBandara();
-        PanggilErrorMaskapai();
-        PanggilRiwayatRekon();
+        // PanggilErrorMaskapai();
+        // PanggilRiwayatRekon();
       })
       .catch((err) => {
         console.log(err);
       });
   }
 
-  const PanggilBandingkanBandaraHapus = async (baris_id, rekon_id) => {
+  const PanggilBandingkanBandaraHapus = async (baris_id, rekon_id, i) => {
     await axios.post(`${urlWeb}/api/bandara/datarekon/${rekon_id}/api_bandingkan_bandara_hapus`, {
       baris_id: baris_id,
       user_id: user_id,
@@ -96,11 +180,17 @@ const BandaraBandingkanJs = () => {
     })
       .then((res) => {
         PanggilBandingkanBandara();
-        PanggilErrorMaskapai();
-        PanggilRiwayatRekon();
+        // let data_a_new = records;
+        // delete data_a_new[i];
+        // setRecords(data_a_new);
+        // setColumn(Object.keys(data_a_new[0]));
+
+        // PanggilErrorMaskapai();
+        // PanggilRiwayatRekon();
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
       });
   }
 
@@ -113,8 +203,8 @@ const BandaraBandingkanJs = () => {
     })
       .then((res) => {
         PanggilBandingkanBandara();
-        PanggilErrorMaskapai();
-        PanggilRiwayatRekon();
+        // PanggilErrorMaskapai();
+        // PanggilRiwayatRekon();
       })
       .catch((err) => {
         console.log(err);
@@ -166,13 +256,48 @@ const BandaraBandingkanJs = () => {
       });
   }
 
+  const TombolAksi = (record) => {
+    if (Object.values(record)[10] === 'tambah') {
+      return (
+        <button className='btn btn-primary btn-sm' onClick={() => PanggilBandingkanBandaraTambah(Object.values(record)[11], rekon_id)}>Tambah</button>
+      );
+    } else if (Object.values(record)[10] === 'hapus') {
+      return (
+        <button className='btn btn-danger btn-sm' onClick={() => PanggilBandingkanBandaraHapus(Object.values(record)[11], rekon_id, i)}>Hapus</button>
+      );
+    } else if (Object.values(record)[10] === 'edit') {
+      return (
+        <button type="button" className="btn btn-warning btn-sm" onClick={() => {
+          setForm_edit(record);
+          setData_edit(record);
+        }} data-bs-toggle="modal" data-bs-target="#exampleModal">
+          Edit
+        </button>
+      );
+    } else if (Object.values(record)[10] === 'sama') {
+      return (
+        <>
+          <button type="button" className="btn btn-warning btn-sm me-1" onClick={() => {
+            setForm_edit(record);
+            setData_edit(record);
+          }} data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Edit
+          </button>
+          <button className='btn btn-danger btn-sm' onClick={() => PanggilBandingkanBandaraHapus(Object.values(record)[11], rekon_id)}>hapus</button>
+        </>
+      );
+    } else {
+      return ('');
+    }
+  }
+
   return (
     <div>
       <Toaster />
       <>
         {user_tipe === 'bandara' && (
           <div className="my-2">
-            {data_rekon.admin_status === null && (
+            {data_rekon.admin_status === undefined && (
               <>
                 {error_bandara === 0 && error_maskapai === 0 && (
                   <button className='btn btn-primary text-white' onClick={() => KirimRekon()}>Kirim Rekon Ke pusat</button>
@@ -208,7 +333,7 @@ const BandaraBandingkanJs = () => {
               <>
                 {Object.keys(form_edit).map((f_e, i) => {
                   let pisah = [];
-                  if (Object.keys(form_edit)[i] !== 'NO' && Object.keys(form_edit)[i] !== 'status_rekon' && Object.keys(form_edit)[i] !== 'baris_id') {
+                  if (Object.keys(form_edit)[i] !== 'status_rekon' && Object.keys(form_edit)[i] !== 'baris_id') {
                     return (
                       <div className="mb-3" key={i}>
                         <div className="d-flex">
@@ -263,7 +388,7 @@ const BandaraBandingkanJs = () => {
                     <tr>
                       <th>Aksi</th>
                       {column.map((c, i) => {
-                        if (c !== 'NO' && c !== 'status_rekon' && c !== 'id_rekon_lawan' && c !== 'baris_id') {
+                        if (c !== 'status_rekon' && c !== 'id_rekon_lawan' && c !== 'baris_id') {
                           return (
                             <th key={i}>{c}</th>
                           );
@@ -277,46 +402,22 @@ const BandaraBandingkanJs = () => {
                       <tr key={i}>
                         {user_tipe !== 'admin_pusat' ? (
                           <td>
-                            {Object.values(record)[12] === 'tambah' && (
-                              <button className='btn btn-primary btn-sm' onClick={() => PanggilBandingkanBandaraTambah(Object.values(record)[13], rekon_id)}>Tambah</button>
-                            )}
-                            {Object.values(record)[12] === 'hapus' && (
-                              <button className='btn btn-danger btn-sm' onClick={() => PanggilBandingkanBandaraHapus(Object.values(record)[13], rekon_id)}>Hapus</button>
-                            )}
-                            {Object.values(record)[12] === 'edit' && (
-                              <button type="button" className="btn btn-warning btn-sm" onClick={() => {
-                                setForm_edit(record);
-                                setData_edit(record);
-                              }} data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                Edit
-                              </button>
-                            )}
-                            {Object.values(record)[12] === 'sama' && (
-                              <>
-                                <button type="button" className="btn btn-warning btn-sm" onClick={() => {
-                                  setForm_edit(record);
-                                  setData_edit(record);
-                                }} data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                  Edit
-                                </button>
-                                <button className='btn btn-danger btn-sm m-1' onClick={() => PanggilBandingkanBandaraHapus(Object.values(record)[13], rekon_id)}>hapus</button>
-                              </>
-                            )}
+                            {TombolAksi(record)}
                           </td>
                         ) : (
                           <td>
-                            {Object.values(record)[12] === 'tambah' && (
+                            {Object.values(record)[10] === 'tambah' && (
                               <button className='btn btn-primary btn-sm' disabled>Tambah</button>
                             )}
-                            {Object.values(record)[12] === 'hapus' && (
+                            {Object.values(record)[10] === 'hapus' && (
                               <button className='btn btn-danger btn-sm' disabled>Hapus</button>
                             )}
-                            {Object.values(record)[12] === 'edit' && (
+                            {Object.values(record)[10] === 'edit' && (
                               <button type="button" className="btn btn-warning btn-sm" disabled>
                                 Edit
                               </button>
                             )}
-                            {Object.values(record)[12] === 'sama' && (
+                            {Object.values(record)[10] === 'sama' && (
                               <>
                                 <button type="button" className="btn btn-warning btn-sm" disabled>
                                   Edit
@@ -328,7 +429,7 @@ const BandaraBandingkanJs = () => {
                         )}
                         {
                           Object.values(record).map((r, j) => {
-                            if (Object.keys(record)[j] !== 'NO' && Object.keys(record)[j] !== 'status_rekon' && Object.keys(record)[j] !== 'id_rekon_lawan' && Object.keys(record)[j] !== 'baris_id') {
+                            if (Object.keys(record)[j] !== 'status_rekon' && Object.keys(record)[j] !== 'id_rekon_lawan' && Object.keys(record)[j] !== 'baris_id') {
                               return (
                                 <td key={j}>{r}</td>
                               );
@@ -362,7 +463,7 @@ const BandaraBandingkanJs = () => {
                   <tr>
                     <td className='btn btn-danger btn-sm my-1'>Hapus</td>
                     <td className='ps-2'>:</td>
-                    <td>Data AWB tidak ditemukan</td>
+                    <td>Data AWB tidak ditemukan di Maskapai</td>
                   </tr>
                   <tr>
                     <td className='btn btn-warning btn-sm my-1'>Edit</td>

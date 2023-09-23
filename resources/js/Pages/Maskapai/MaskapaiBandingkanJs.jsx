@@ -31,36 +31,53 @@ const MaskapaiBandingkanJs = () => {
   const PanggilBandingkanMaskapai = async () => {
     setLoading(true);
     $('#table_rekon').DataTable().clear().destroy();
-    await axios.get(`${urlWeb}/api/maskapai/datarekon/${rekon_id}/api_bandingkan_maskapai`)
-      .then((res) => {
-        console.log(res);
-        setTimeout(() => {
-          setData_rekon(res.data.data_rekon);
-          setRecords(res.data.data_rekon_text);
-          setColumn(Object.keys(res.data.data_rekon_text[0]));
-          setError_maskapai(res.data.jumlah_error_maskapai);
-          TableData();
-          setLoading(false);
-        }, 1000);
-      })
-      .catch((err) => {
-        console.log(err);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
-      });
+    // await axios.get(`${urlWeb}/api/maskapai/datarekon/${rekon_id}/api_bandingkan_maskapai`)
+    //   .then((res) => {
+    //     console.log(res);
+    //     setData_rekon(res.data.data_rekon);
+    //     setRecords(res.data.data_rekon_text);
+    //     setColumn(Object.keys(res.data.data_rekon_text[0]));
+    //     setError_maskapai(res.data.jumlah_error_maskapai);
+    //     setTimeout(() => {
+    //       TableData();
+    //       setLoading(false);
+    //     }, 1000);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     setTimeout(() => {
+    //       setLoading(false);
+    //     }, 1000);
+    //   });
+
+    try {
+      let res = await axios.get(`${urlWeb}/api/maskapai/datarekon/${rekon_id}/api_bandingkan_maskapai`);
+      setRecords(res.data.data_rekon_text);
+      setColumn(Object.keys(res.data.data_rekon_text[0]));
+      setData_rekon(res.data.data_rekon);
+      setError_maskapai(res.data.jumlah_error_maskapai);
+      setTimeout(() => {
+        TableData();
+        setLoading(false);
+      }, 1000);
+    } catch (err) {
+      console.log(err);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
   }
 
-  const PanggilRiwayatRekon = () => {
-    axios.get(`${urlWeb}/api/maskapai/datarekon/${rekon_id}/api_riwayat_rekon`)
+  const PanggilRiwayatRekon = async () => {
+    await axios.get(`${urlWeb}/api/maskapai/datarekon/${rekon_id}/api_riwayat_rekon`)
       .then((res) => {
         setRiwayat(res.data.riwayat_rekon);
       })
       .catch((err) => { console.log(err) });
   }
 
-  const PanggilErrorBandara = () => {
-    axios.get(`${urlWeb}/api/maskapai/datarekon/${rekon_id}/api_error_bandara`)
+  const PanggilErrorBandara = async () => {
+    await axios.get(`${urlWeb}/api/maskapai/datarekon/${rekon_id}/api_error_bandara`)
       .then((res) => {
         setError_bandara(res.data.jumlah_error_admin);
       })
@@ -295,6 +312,7 @@ const MaskapaiBandingkanJs = () => {
                                 <button className='btn btn-danger btn-sm' onClick={() => PanggilBandingkanMaskapaiHapus(Object.values(record)[13], rekon_id)}>Hapus</button>
                               </>
                             )}
+
                           </td>
                         ) : (
                           <td>
@@ -340,6 +358,7 @@ const MaskapaiBandingkanJs = () => {
                 {error_bandara > 0 && (
                   <span className='text-danger'>* Masih Terdapat error pada rekon bandara</span>
                 )}
+                <br />
                 <br />
               </div>
             )}
